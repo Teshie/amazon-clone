@@ -1,0 +1,84 @@
+.login {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+}
+.login__logo {
+  width: 100px;
+  margin-top: 20px;
+  object-fit: contain;
+  margin-right: auto;
+  margin-left: auto;
+}
+.logo__container {
+  height: fit-content;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  border: 1px solid lightgray;
+  padding: 20px;
+}
+.logo__container > h1 {
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+.logo__container > form > h5 {
+  margin-bottom: 5px;
+}
+.logo__container > form > input {
+  height: 30px;
+  margin-bottom: 10px;
+  background-color: white;
+  width: 95%;
+}
+.logo__container form > p {
+  margin-top: 15px;
+  font-size: 12px;
+}
+
+.login__signInButton {
+  background-color: #f0c14b;
+  width: 97.6%;
+  border-radius: 2px;
+  height: 30px;
+  border: 1px solid;
+  margin-top: 10px;
+  border-color: #a88734 #9c7e31 #846a29;
+}
+.loginRegister__Button {
+  height: 30px;
+  width: 98%;
+  margin-top: 20px;
+}
+.newToAmazon {
+  text-decoration: overline;
+}
+.newToAmazon {
+  overflow: hidden;
+  text-align: center;
+  color: rgb(173, 171, 171);
+}
+
+.newToAmazon:before,
+.newToAmazon:after {
+  background-color: rgb(218, 213, 213);
+  content: "";
+  display: inline-block;
+  height: 1px;
+  position: relative;
+  vertical-align: middle;
+  width: 50%;
+}
+
+.newToAmazon:before {
+  right: 0.5em;
+  margin-left: -50%;
+}
+
+.newToAmazon:after {
+  left: 0.5em;
+  margin-right: -50%;
+}
