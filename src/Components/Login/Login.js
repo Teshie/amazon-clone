@@ -14,7 +14,7 @@ const Login = () => {
     //firebase stuff here
     auth
       .signInWithEmailAndPassword(email, password)
-      .auth((auth) => {
+      .then((auth) => {
         history.push("/");
       })
       .catch((error) => alert(error.message));

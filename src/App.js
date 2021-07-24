@@ -5,15 +5,31 @@ import Checkout from "./Components/Checkout/Checkout";
 import Login from "./Components/Login/Login";
 import { useEffect } from "react";
 import { auth } from "./Components/Firebase/Firebase";
+import { useStateValue } from "./Components/StateProvider";
 function App() {
-  auth.onAuthStateChanged((authUser) => {
-    console.log("THE USER IS >>>", authUser);
-    if (authUser) {
-      //if the user is signed in aleraedy
-      //dispatch the user data to data layer
-    }
-  });
-  useEffect({}, []);
+  // const
+  const [{}, dispatch] = useStateValue();
+
+  useEffect(() => {
+    auth.onAuthStateChanged((authUser) => {
+      console.log("THE USER IS >>>", authUser);
+      if (authUser) {
+        //if the user is signed in aleraedy
+        //dispatch the user data to the data layer
+        dispatch({
+          //the user is just logged in / the user was logged in
+          type: "SET_USER",
+          user: authUser,
+        });
+      } else {
+        //the user is logged out
+        dispatch({
+          type: "SET_USER",
+          user: null,
+        });
+      }
+    });
+  }, []);
   return (
     <Router>
       <div className="app">
