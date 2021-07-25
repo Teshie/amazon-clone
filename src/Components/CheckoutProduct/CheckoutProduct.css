@@ -4,3 +4,11 @@
 .checkoutProduct__image {
   padding-top: 5px;
 }
+.checkoutProduct__info {
+  padding-left: 10px;
+  padding-top: 5px;
+}
+.checkoutProduct {
+  display: flex;
+  padding-top: 5px;
+}
