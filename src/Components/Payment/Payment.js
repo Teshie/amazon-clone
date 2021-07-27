@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CheckoutProdcut from "../CheckoutProduct/CheckoutProdcut";
 import { useStateValue } from "../StateProvider";
 import "./Payment.css";
@@ -6,22 +6,65 @@ import { Link } from "react-router-dom";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import CurrencyFormat from "react-currency-format";
 import { getBasketTotal } from "../Reducer/Reducer";
+import axios from "./axios";
+import { useHistory } from "react-router";
+
 const Payment = () => {
   const [{ basket, user }, dispatch] = useStateValue();
 
   const stripe = useStripe();
   const elements = useElements();
+  const history = useHistory();
 
-  const [error, setError] = useState();
-  const [disable, setDisable] = useState();
+  const [error, setError] = useState(null);
+  const [succeeded, setSucceeded] = useState(false);
+  const [processing, setProcessing] = useState("");
+  const [disabled, setDisabled] = useState(true);
+  const [clientsecret, setClientSecret] = useState(true);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    // generate the special stripe secret which allows us to charge a customer
+    const getClientSecret = async () => {
+      const response = await axios({
+        method: "post",
+        // Stripe expects the total in a currencies subunits
+        url: `/payments/create?total=${getBasketTotal(basket) * 100}`,
+      });
+      setClientSecret(response.data.clientSecret);
+    };
+
+    getClientSecret();
+  }, [basket]);
+
+  console.log("The Secret is >>>", clientsecret);
+
+  const handleSubmit = async (event) => {
     //do all the fancy stripe stuff...
+    event.preventDefault();
+    setProcessing(true);
+
+    const payload = await stripe
+      .confirmCardPayment(clientsecret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+        },
+      })
+      .then(({ paymentIntent }) => {
+        //payment intent = payment confirmation
+        setSucceeded(true);
+        setError(null);
+        setProcessing(false);
+        history.replace("/orders");
+
+        dispatch({
+          type: "EMPTY_BASKET",
+        });
+      });
   };
   const handleChange = (event) => {
     //Listen for changes in the card element
     //and display any errors at the customer types their card details
-    setDisable(event.empty);
+    setDisabled(event.empty);
     setError(event.error ? event.error.message : "");
   };
 
@@ -72,7 +115,12 @@ const Payment = () => {
                   thousandSeparator={true}
                   prefix={"$"}
                 />
+                <button disabled={processing || disabled || succeeded}>
+                  <span>{processing ? <p>Processing</p> : "Buy now"}</span>
+                </button>
               </div>
+              {/* errors */}
+              {error && <div>{error}</div>}
             </form>
           </div>
         </div>
