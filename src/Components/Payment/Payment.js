@@ -8,6 +8,7 @@ import CurrencyFormat from "react-currency-format";
 import { getBasketTotal } from "../Reducer/Reducer";
 import axios from "./axios";
 import { useHistory } from "react-router";
+import { db } from "../Firebase/Firebase";
 
 const Payment = () => {
   const [{ basket, user }, dispatch] = useStateValue();
@@ -16,11 +17,11 @@ const Payment = () => {
   const elements = useElements();
   const history = useHistory();
 
-  const [error, setError] = useState(null);
   const [succeeded, setSucceeded] = useState(false);
   const [processing, setProcessing] = useState("");
+  const [error, setError] = useState(null);
   const [disabled, setDisabled] = useState(true);
-  const [clientsecret, setClientSecret] = useState(true);
+  const [clientSecret, setClientSecret] = useState(true);
 
   useEffect(() => {
     // generate the special stripe secret which allows us to charge a customer
@@ -36,29 +37,37 @@ const Payment = () => {
     getClientSecret();
   }, [basket]);
 
-  console.log("The Secret is >>>", clientsecret);
+  console.log("THE SECRET IS >>>", clientSecret);
+  console.log("👱", user);
 
   const handleSubmit = async (event) => {
-    //do all the fancy stripe stuff...
+    // do all the fancy stripe stuff...
     event.preventDefault();
     setProcessing(true);
 
     const payload = await stripe
-      .confirmCardPayment(clientsecret, {
+      .confirmCardPayment(clientSecret, {
         payment_method: {
           card: elements.getElement(CardElement),
         },
       })
       .then(({ paymentIntent }) => {
-        //payment intent = payment confirmation
+        // paymentIntent = payment confirmation
+
+        db.collection("users")
+          .doc(user?.uid)
+          .collection("orders")
+          .doc(paymentIntent.id);
+
         setSucceeded(true);
         setError(null);
         setProcessing(false);
-        history.replace("/orders");
 
         dispatch({
           type: "EMPTY_BASKET",
         });
+
+        history.replace("/");
       });
   };
   const handleChange = (event) => {
@@ -78,8 +87,8 @@ const Payment = () => {
           </div>
           <div className="payment__address">
             <h3>{user.email}</h3>
-            <h3>Kebele 18, Gondar</h3>
-            <h3>Gondar, Ethiopia</h3>
+            <h3>Joseph Martin, 1st Street</h3>
+            <h3>Austin, US</h3>
           </div>
         </div>
         <div className="payment__section">
