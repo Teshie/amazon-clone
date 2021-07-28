@@ -39,7 +39,7 @@ const Login = () => {
       <Link to="/">
         <img
           className="login__logo"
-          src="https://logos-world.net/wp-content/uploads/2020/04/Amazon-Logo.png"
+          src="https://upload.wikimedia.org/wikipedia/commons/d/de/Amazon_icon.png"
           alt="amazon-logo"
         />
       </Link>
